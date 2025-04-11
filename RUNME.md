@@ -21,11 +21,11 @@ cd backend
 source venv/bin/activate       # Activate virtual environment
 export FLASK_APP=app.py
 export FLASK_ENV=development
-flask run --host=127.0.0.1 --port=5000
+flask run --host=127.0.0.1 --port=5003
 ```
 
 This starts the API server at:  
-📡 `http://localhost:5000`
+📡 `http://localhost:5003`
 
 > ⚠️ If you're on Windows, use `venv\Scripts\activate` instead of `source ...`
 
