@@ -38,10 +38,21 @@ class NotificationService {
   + notifyGuestsOfChange(event: Event): void
 }
 
+class UserStore {
+  - usersByEmail: Map<String, UserAccount>
+
+  + addUser(user: UserAccount): void
+  + getUserByEmail(email: String): UserAccount
+  + getAllUsers(): List<UserAccount>
+  + save(file: String): void
+  + load(file: String): void
+}
+
 ' Relationships
 UserAccount "1" --> "0..*" Event : creates >
 Event "1" --> "1" UserAccount : host
 Event "1" --> "0..*" UserAccount : rsvp from >
 UserAccount --> NotificationService : uses >
+UserStore --> UserAccount : manages >
 
 @enduml
