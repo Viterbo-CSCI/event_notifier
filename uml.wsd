@@ -1,0 +1,47 @@
+@startuml
+title Event Planning & RSVP System - MVP Class Diagram
+
+enum RSVPStatus {
+  Going
+  Maybe
+  NotGoing
+}
+
+class UserAccount {
+  - email: String
+  - phone: String
+  - valid: Boolean
+
+  + login(email: String, password: String): Boolean
+  + logout(): void
+  + getAccountInfo(): String
+  + changeInfo(email: String, phone: String): void
+}
+
+class Event {
+  - id: String
+  - title: String
+  - location: String
+  - dateTime: DateTime
+  - rsvpList: Map<UserAccount, RSVPStatus>
+  - host: UserAccount
+
+  + getInfo(): String
+  + addRSVP(user: UserAccount, status: RSVPStatus): void
+  + edit(title: String, location: String, dateTime: DateTime): void
+  + getRSVPCount(): Map<RSVPStatus, Integer>
+}
+
+class NotificationService {
+  + sendEmail(to: String, subject: String, body: String): void
+  + notifyHostOfRSVP(host: UserAccount, guest: UserAccount, event: Event, status: RSVPStatus): void
+  + notifyGuestsOfChange(event: Event): void
+}
+
+' Relationships
+UserAccount "1" --> "0..*" Event : creates >
+Event "1" --> "1" UserAccount : host
+Event "1" --> "0..*" UserAccount : rsvp from >
+UserAccount --> NotificationService : uses >
+
+@enduml
