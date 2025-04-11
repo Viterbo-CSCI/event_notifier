@@ -1,97 +1,161 @@
+# Let's generate a beginner-friendly README for the current project
+readme_content = """
 # 📅 Event Planning & RSVP System – MVP
 
-This is a **Minimum Viable Product (MVP)** for a startup client who wants a simple, public-facing event planning and RSVP web app.
+This is a beginner-friendly **Event Planning & RSVP System**, built as an educational project using Python, Flask, and React. It demonstrates core software engineering concepts such as object-oriented programming, serialization, and web service design.
 
 ---
 
+## 🧠 Project Overview
 
-mkdir backend
-cd backend
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install flask flask-cors flask-mail
-pip freeze > requirements.txt
-touch app.py
+Users can:
+- Create public events
+- RSVP to events with status (Going, Maybe, NotGoing)
+- View their event info
+- Be notified of changes or RSVP updates via a notification system
 
-## 🧠 Project Description
-
-You are developing a lightweight, mobile-friendly system where users can:
-
-- Create **public events**
-- View a list of upcoming events
-- RSVP (Going / Maybe / Not Going)
-- Receive **email notifications** when:
-  - Someone RSVPs to their event (host)
-  - Event details change (guest)
-
-The MVP is meant to be deployed quickly to test with real users.
+All data is stored **in memory** using Python objects and persisted with `pickle` files (no database required).
 
 ---
 
-## 🛠️ Tech Stack
+## 🧱 Core Technologies
 
-- **Frontend:** React
-- **Backend:** Flask (Python)
-- **Database:** SQLite or PostgreSQL (TBD)
-- **Email Service:** Flask-Mail or an external service (e.g., SendGrid)
-- **Version Control:** Git + GitHub
-- **Optional:** Docker for containerization
+- **Backend:** Python, Flask
+- **Frontend:** React (using Axios to call Flask API)
+- **Persistence:** Python `pickle` module
+- **Modeling:** UML-driven class design
 
 ---
 
-## ✅ Functional Requirements
+## 🧩 UML-Based Class Design
 
-The system must allow users to:
+### `UserAccount`
+Represents a registered user.
 
-- Register and log in (basic auth)
-- Create public events (title, time, location, description)
-- View a list of all events
-- RSVP with a status (Going, Maybe, Not Going)
-- See how many people RSVP’d per event
-- Receive email notifications:
-  - Hosts: when someone RSVPs
-  - Guests: when event details change
+| Attribute     | Type    | Description               |
+|---------------|---------|---------------------------|
+| email         | String  | User's email address      |
+| phone         | String  | User's phone number       |
+| valid         | Boolean | Whether the account is active |
 
----
-
-## 🚫 Out of Scope (for MVP)
-
-- Private or invite-only events
-- User profiles or settings
-- Chat or messaging features
-- Event ticketing or payment
-- Advanced email customization or scheduling
+| Method              | Description                                   |
+|---------------------|-----------------------------------------------|
+| `login()`           | Authenticates the user                        |
+| `logout()`          | Logs the user out (clears session/token)      |
+| `getAccountInfo()`  | Returns user info as string or dict           |
+| `changeInfo()`      | Updates email and/or phone number             |
 
 ---
 
-## ⚙️ Non-Functional Requirements
+### `UserStore`
+Manages a collection of `UserAccount` objects.
 
-- Responsive, mobile-friendly UI
-- Simple, intuitive UX
-- RESTful API design for frontend-backend communication
-- Email notifications sent in real-time
-- Clean codebase with comments and docstrings
+| Attribute     | Type                         | Description                          |
+|---------------|------------------------------|--------------------------------------|
+| usersByEmail  | `dict<email, UserAccount>`   | Stores users keyed by their email    |
 
----
-
-## 🧱 Agile Development Process
-
-This project follows a **multi-step Agile workflow**:
-
-- Step 1: Analyze client needs and write **user stories**
-- Step 2: Define **epics** and organize the backlog
-- Step 3: Conduct **sprint planning**
-- Step 4: Design with **UML diagrams** (Use Case + Class)
+| Method              | Description                                   |
+|---------------------|-----------------------------------------------|
+| `addUser()`         | Adds a new user to the store                  |
+| `getUserByEmail()`  | Retrieves user by email                       |
+| `getAllUsers()`     | Lists all users                               |
+| `save()`            | Saves all users to a file using `pickle`      |
+| `load()`            | Loads users from file at startup              |
 
 ---
 
-## 🚀 MVP Sprint 1 Goal
+### `Event`
+Represents a hosted event.
 
-Your goal for Sprint 1 is to deliver:
+| Attribute     | Type                          | Description                            |
+|---------------|-------------------------------|----------------------------------------|
+| id            | String                        | Unique event identifier                |
+| title         | String                        | Title of the event                     |
+| location      | String                        | Where the event is hosted              |
+| dateTime      | DateTime                      | When the event occurs                  |
+| host          | UserAccount                   | The user who created the event         |
+| rsvpList      | `dict<UserAccount, RSVPStatus>` | Tracks RSVPs by user                  |
 
-- Working user registration and login
-- Event creation and display
-- Basic RSVP functionality
-- Email alerts for RSVP actions
+| Method              | Description                                   |
+|---------------------|-----------------------------------------------|
+| `getInfo()`         | Returns formatted event info                  |
+| `addRSVP()`         | Adds or updates RSVP for a user               |
+| `edit()`            | Updates title, location, or date/time         |
+| `getRSVPCount()`    | Returns RSVP counts by status                 |
 
-Keep it simple, clean, and focused on user needs.
+---
+
+### `NotificationService`
+Simulates sending emails to users.
+
+| Method                        | Description                                        |
+|-------------------------------|----------------------------------------------------|
+| `sendEmail()`                 | Simulates sending an email                         |
+| `notifyHostOfRSVP()`          | Informs host when someone RSVPs                    |
+| `notifyGuestsOfChange()`      | Informs all guests of changes to event details     |
+
+---
+
+### `RSVPStatus` (Enum)
+Used to track RSVP response status.
+
+| Value        | Meaning        |
+|--------------|----------------|
+| `Going`      | User is attending |
+| `Maybe`      | User might attend |
+| `NotGoing`   | User is not attending |
+
+---
+
+## 🔁 System Relationships
+
+- `UserAccount` creates `Event` (host is a user)
+- `UserAccount` RSVPs to `Event`
+- `UserStore` manages many `UserAccount` instances
+- `Event` tracks RSVPs using `UserAccount` and `RSVPStatus`
+- `NotificationService` interacts with `UserAccount` and `Event`
+
+---
+
+## 🚀 Project Goals
+
+This system is used to:
+- Teach object-oriented design and UML modeling
+- Practice building RESTful APIs with Flask
+- Understand state persistence without databases
+- Integrate frontend/backend communication using JSON
+- Simulate real-world features like RSVP management and notifications
+
+---
+
+## 📝 Getting Started (Coming Soon)
+Instructions for running the Flask backend, React frontend, and testing routes will be added here.
+
+---
+
+## 📦 Persistence
+
+All user data is stored in memory and saved to disk using Python’s `pickle` module in `users.pkl`. This makes it easy to reload users after restarting the server.
+
+---
+
+## 💡 Notes for Students
+
+- The app currently has no login sessions or tokens — it's for learning structure, not production auth
+- Events and notifications are also stored in memory (no real email)
+- Classes follow UML closely to demonstrate good design patterns
+
+---
+
+## 📈 Next Steps (Future Epics)
+
+- Event creation and editing
+- RSVP submission UI
+- Notification handling and templates
+- Guest email import (CSV or list input)
+"""
+
+# Save the README to file
+readme_path = Path("/mnt/data/README_Event_Planner.md")
+readme_path.write_text(readme_content.strip())
+readme_path
