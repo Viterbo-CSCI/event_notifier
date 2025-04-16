@@ -105,6 +105,8 @@ def create_events():
             return {"error": "No data provided or invalid JSON"}, 400
             
         print(f"Received event data: {event_data}")
+
+        #TODO Automatically generate ID
         
         required_fields = ['id', 'title', 'location', 'dateTime', 'rsvpList', 'host']
         for field in required_fields:
