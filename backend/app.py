@@ -1,4 +1,4 @@
-from flask import Flask, session
+from flask import Flask, session, render_template
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -6,9 +6,9 @@ CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 app.secret_key = 'my_secret_key'
 
-@app.route('/api/hello')
-def hello():
-    return {"message": "Hello from Flask!"}
+@app.route('/api/home')
+def home():
+    return render_template('home.html') # Render the home.html template
 
 @app.route('/api/login', methods=['POST'])
 def login():
