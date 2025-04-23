@@ -86,11 +86,15 @@ class EventStore:
     
     def id_exists(self, event_id):
         return event_id in self._event_index
-    
+    # This should only return 1 item beause ID is unique
     def get_by_id(self, event_id):
         if event_id in self._event_index:
             return self._events[self._event_index[event_id]]
         return None
+    
+    # This should return all items with the title isn't unique
+    def get_by_title(self, title):
+        return [event for event in self._events if event.title == title]
     
     def get_all(self):
         return self._events
