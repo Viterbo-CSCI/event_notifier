@@ -180,10 +180,11 @@ def get_events():
 if __name__ == '__main__':
     event_store.load_all()
     app.run(host='0.0.0.0', port=5003, debug=True)
+    
 import json
 with open('data.json', 'r') as f:
     data = json.load(f)
-    
+@app.route('/api/changeEmail', methods=['POST'])    
 def changeEmail(data_list, current_email, new_email):
     #There's probably some edge case that I'm missing for inputted email values, but I can't think of anything
     for entry in data_list: 
@@ -193,7 +194,7 @@ def changeEmail(data_list, current_email, new_email):
                 json.dump(data, f, indent=4)
             return True #"Email successfully changed!"
     return False #"Please enter a valid email"
-
+@app.route('/api/changePhone', methods=['POST']) 
 def changePhone(data_list, current_phone, new_phone):
     if current_phone[3] == "-" or current_phone[3] == " " and current_phone[7] == "-" or current_phone[7] == " ": #checks if current phone has common separators and sets it to just numbers
         indices = [0, 1, 2, 4, 5, 6, 8, 9, 10, 11]
